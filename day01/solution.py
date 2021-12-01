@@ -2,13 +2,26 @@ from utils.file import read_file_content
 
 
 def solve_part1(input: str) -> int:
+    lines = input.split("\n")
+    prev = int(lines[0])
     r = 0
+    for x in range(1, len(lines)):
+        if int(lines[x]) > prev:
+            r += 1
+        prev = int(lines[x])
 
     return r
 
 
 def solve_part2(input: str) -> int:
+    lines = input.split("\n")
+    prevsum = int(lines[0]) + int(lines[1]) + int(lines[2])
     r = 0
+    for x in range(3, len(lines)):
+        sum = int(lines[x-2]) + int(lines[x-1]) + int(lines[x])
+        if sum > prevsum:
+            r += 1
+        prevsum = sum
 
     return r
 
