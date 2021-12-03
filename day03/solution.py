@@ -6,18 +6,11 @@ def solve_part1(input: str) -> int:
     lines = input.split("\n")
     total = len(lines)
 
-    r1 = ""
-    r2 = ""
-    for i in range(len(lines[0])):
-        ones = len([l for l in lines if l[i] == '1'])
-        if ones >= total/2:
-            r1 += '1'
-            r2 += '0'
-        else:
-            r1 += '0'
-            r2 += '1'
+    occs = [len([l for l in lines if l[i] == '1']) for i in range(len(lines[0]))]
+    bits = ['1' if o >= total/2 else '0' for o in occs]
+    inverse = ['0' if b == '1' else '1' for b in bits]
 
-    return int(r1, 2)*int(r2, 2)
+    return int("".join(bits), 2) * int("".join(inverse), 2)
 
 
 def solve_part2(input: str) -> int:
