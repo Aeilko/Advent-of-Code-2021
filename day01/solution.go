@@ -10,7 +10,7 @@ import (
 const DAY = "01"
 
 
-func solvePart1 (input string) string {
+func solvePart1 (input string) int {
 	var lines = strings.Split(input, "\r\n")
 
 	var prevVal, result int
@@ -27,10 +27,10 @@ func solvePart1 (input string) string {
 		prevVal = val
 	}
 
-	return strconv.Itoa(result)
+	return result
 }
 
-func solvePart2 (input string) string {
+func solvePart2 (input string) int {
 	var lines = strings.Split(input, "\r\n")
 
 	var result int
@@ -42,28 +42,28 @@ func solvePart2 (input string) string {
 		}
 	}
 
-	return strconv.Itoa(result)
+	return result
 }
 
 
 func testPart1 () bool {
 	var input = utils.ReadFileContent("day" + DAY + "/inputs/test")
-	var answer = utils.ReadFileContent("day" + DAY + "/inputs/ans1")
+	var answer,_ = strconv.Atoi(utils.ReadFileContent("day" + DAY + "/inputs/ans1"))
 
 	var result = solvePart1(input)
 	if result != answer {
-		fmt.Println("Test unsuccessful: " + result + ", expected: " + answer)
+		fmt.Println("Test unsuccessful: " + strconv.Itoa(result) + ", expected: " + strconv.Itoa(answer))
 	}
 	return result == answer
 }
 
 func testPart2 () bool {
 	var input = utils.ReadFileContent("day" + DAY + "/inputs/test")
-	var answer = utils.ReadFileContent("day" + DAY + "/inputs/ans2")
+	var answer,_ = strconv.Atoi(utils.ReadFileContent("day" + DAY + "/inputs/ans2"))
 
 	var result = solvePart2(input)
 	if result != answer {
-		fmt.Println("Test unsuccessful: " + result + ", expected: " + answer)
+		fmt.Println("Test unsuccessful: " + strconv.Itoa(result) + ", expected: " + strconv.Itoa(answer))
 	}
 	return result == answer
 }
@@ -71,17 +71,19 @@ func testPart2 () bool {
 func main () {
 	var input = utils.ReadFileContent("day" + DAY + "/inputs/input")
 
+	fmt.Println(" ~~~ Advent of Code 2021, Day " + DAY + " ~~~")
+
 	fmt.Println(" --- Part 1 --- ")
 	var test = testPart1()
 	if test {
 		fmt.Println("Test Successful")
-		fmt.Println("Part 1 result:\t" + solvePart1(input))
+		fmt.Println("Part 1 result:\t" + strconv.Itoa(solvePart1(input)))
 	}
 
 	fmt.Println("\n --- Part 2 --- ")
 	test = testPart2()
 	if test {
 		fmt.Println("Test Successful")
-		fmt.Println("Part 2 result:\t" + solvePart2(input))
+		fmt.Println("Part 2 result:\t" + strconv.Itoa(solvePart2(input)))
 	}
 }
