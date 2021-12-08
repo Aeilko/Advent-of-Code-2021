@@ -37,10 +37,9 @@ def solve_part2(input: str) -> int:
         score = 0
         for x in nums:
             tmp = abs(x-i)
-            for j in range(1, tmp+1):
-                score += j
+            score += tmp * (tmp + 1) / 2
         if score < minVal:
-            minVal = score
+            minVal = int(score)
 
     return minVal
 
