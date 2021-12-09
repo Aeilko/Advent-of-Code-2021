@@ -1,16 +1,21 @@
-from utils.file import read_file_content
+def read_file_content(path: str) -> str:
+    file = open(path, "r")
+    r = file.read()
+    file.close()
+
+    return r
 
 
 def get_neighbours(grid, x, y):
-    result = {}
+    result = set()
     if x > 0:
-        result[(x-1, y)] = grid[y][x-1]
+        result.add((x-1, y))
     if y > 0:
-        result[(x, y-1)] = grid[y-1][x]
+        result.add((x, y-1))
     if x < len(grid[0])-1:
-        result[(x+1, y)] = grid[y][x+1]
+        result.add((x+1, y))
     if y < len(grid)-1:
-        result[(x, y+1)] = grid[y+1][x]
+        result.add((x, y+1))
     return result
 
 
@@ -27,7 +32,7 @@ def solve_part1(input: str) -> int:
             n = get_neighbours(grid, x, y)
             r = True
             for c in n:
-                if n.get(c) <= grid[y][x]:
+                if grid[c[1]][c[0]] <= grid[y][x]:
                     r = False
             if r:
                 result += grid[y][x]+1
@@ -42,39 +47,30 @@ def solve_part2(input: str) -> int:
     for line in lines:
         grid.append([int(c) for c in line])
 
-    unvisited = [(x, y) for x in range(len(lines[0])) for y in range(len(lines)) if grid[y][x] != 9]
-    toVisit = {unvisited[0]}
+    unvisited = set([(x, y) for x in range(len(lines[0])) for y in range(len(lines)) if grid[y][x] != 9])
+    toVisit = {unvisited.pop()}
 
     basins = []
-    curBasin = 0
+    cur_basin = 0
     while len(toVisit) > 0:
-        curPoint = toVisit.pop()
-        x = curPoint[0]
-        y = curPoint[1]
-        n = get_neighbours(grid, x, y)
+        cur_point = toVisit.pop()
+        n = get_neighbours(grid, cur_point[0], cur_point[1])
 
-        curBasin += 1
-        unvisited.remove(curPoint)
+        cur_basin += 1
 
         for key in n:
             if key not in toVisit and key in unvisited:
                 toVisit.add(key)
+                unvisited.remove(key)
 
         if len(toVisit) == 0:
-            basins.append(curBasin)
-            curBasin = 0
+            basins.append(cur_basin)
+            cur_basin = 0
             if len(unvisited) > 0:
-                c = unvisited.pop()
-                toVisit = {c}
-                unvisited.append(c)
+                toVisit.add(unvisited.pop())
 
-    n1 = max(basins)
-    basins.remove(n1)
-    n2 = max(basins)
-    basins.remove(n2)
-    n3 = max(basins)
-
-    return n1*n2*n3
+    sorted_basins = sorted(basins)[-3:]
+    return sorted_basins[0] * sorted_basins[1] * sorted_basins[2]
 
 
 def test_part1():
