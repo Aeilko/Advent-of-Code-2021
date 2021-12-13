@@ -1,7 +1,26 @@
 from utils.file import read_file_content
 
 
-def find_paths(cur_node, graph, path):
+def parse_graph(input):
+    lines = input.split("\n")
+    graph = {}
+    for line in lines:
+        (n1, n2) = line.split("-")
+        # Don't save any outgoing connections to start, we never want to go there
+        if n2 != "start":
+            if n1 in graph:
+                graph[n1].add(n2)
+            else:
+                graph[n1] = {n2}
+        if n1 != "start":
+            if n2 in graph:
+                graph[n2].add(n1)
+            else:
+                graph[n2] = {n1}
+    return graph
+
+
+def find_paths(cur_node, graph, path, double_visited):
     path.append(cur_node)
     routes = set()
     if cur_node == "end":
@@ -11,67 +30,24 @@ def find_paths(cur_node, graph, path):
         for n in neighbours:
             if n.islower():
                 if n not in path:
-                    routes = routes | find_paths(n, graph, list(path))
+                    routes = routes | find_paths(n, graph, list(path), double_visited)
+                elif not double_visited:
+                    routes = routes | find_paths(n, graph, list(path),  True)
             else:
-                routes = routes | find_paths(n, graph, list(path))
-
-    return routes
-
-
-def find_paths2(cur_node, graph, path, double_visited):
-    path.append(cur_node)
-    routes = set()
-    if cur_node == "end":
-        routes.add(tuple(path))
-    else:
-        neighbours = graph[cur_node]
-        for n in neighbours:
-            if n.islower():
-                if n not in path:
-                    routes = routes | find_paths2(n, graph, list(path), double_visited)
-                elif not double_visited and n != "start":
-                    routes = routes | find_paths2(n, graph, list(path),  True)
-            else:
-                routes = routes | find_paths2(n, graph, list(path), double_visited)
+                routes = routes | find_paths(n, graph, list(path), double_visited)
 
     return routes
 
 
 def solve_part1(input: str) -> int:
-    lines = input.split("\n")
-    graph = {}
-    for line in lines:
-        (n1, n2) = line.split("-")
-        if n1 in graph:
-            graph[n1].add(n2)
-        else:
-            graph[n1] = {n2}
-        if n2 in graph:
-            graph[n2].add(n1)
-        else:
-            graph[n2] = {n1}
-
-    routes = find_paths("start", graph, [])
-
+    graph = parse_graph(input)
+    routes = find_paths("start", graph, [], True)
     return len(routes)
 
 
 def solve_part2(input: str) -> int:
-    lines = input.split("\n")
-    graph = {}
-    for line in lines:
-        (n1, n2) = line.split("-")
-        if n1 in graph:
-            graph[n1].add(n2)
-        else:
-            graph[n1] = {n2}
-        if n2 in graph:
-            graph[n2].add(n1)
-        else:
-            graph[n2] = {n1}
-
-    routes = find_paths2("start", graph, [], False)
-
+    graph = parse_graph(input)
+    routes = find_paths("start", graph, [], False)
     return len(routes)
 
 
