@@ -1,9 +1,5 @@
 from utils.file import read_file_content
-
-
-# TODO: Look into Priority Queues in Python, that should be way better then my current sorted list implementation
-def sort_nodes(e):
-    return e[1]
+from queue import PriorityQueue
 
 
 def get_neighbours(grid, x, y):
@@ -20,29 +16,25 @@ def get_neighbours(grid, x, y):
 
 
 def find_path(grid):
-    toVisit = []
+    target = (len(grid[0]) - 1, len(grid) - 1)
+
+    to_visit = PriorityQueue()
     visited = set()
-    toVisit.append(((0, 0), 0))
-    TARGET = (len(grid[0]) - 1, len(grid) - 1)
     result = 0
-    while len(toVisit) > 0:
-        toVisit.sort(key=sort_nodes, reverse=True)
-        ((x, y), cost) = toVisit.pop()
-        if (x, y) == TARGET:
+    to_visit.put((0, (0, 0)))
+    while to_visit.qsize() > 0:
+        (cost, cur_node) = to_visit.get()
+        if cur_node in visited:
+            continue
+        if cur_node == target:
             result = cost
             break
-        n = get_neighbours(grid, x, y)
+        visited.add(cur_node)
+        n = get_neighbours(grid, cur_node[0], cur_node[1])
         for node in n:
             if node not in visited:
                 nc = cost + grid[node[1]][node[0]]
-                tmp = [x[1] for x in toVisit if x[0] == node]
-                if len(tmp) > 0:
-                    if nc < tmp[0]:
-                        toVisit.remove((node, tmp[0]))
-                        toVisit.append((node, nc))
-                else:
-                    toVisit.append((node, nc))
-        visited.add((x, y))
+                to_visit.put((nc, node))
 
     return result
 
